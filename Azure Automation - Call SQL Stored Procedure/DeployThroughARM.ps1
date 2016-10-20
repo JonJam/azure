@@ -29,7 +29,9 @@ Add-AzureRmAccount
 $TemplateParameterFile = "azuredeploy.parameters.json"
 $TemplateFilePath = "azuredeploy.json"
 
-# Runbook needs to be uploaded already e.g. blob storage
+# TODO Prior to running below:
+# - The Powershell Workflow runbook needs to be uploaded to a public URI e.g. Azure Blob Storage
+# - Update the azuredeploy.parameters.json file.
 
 # Create Resource Group
 New-AzureRmResourceGroup -Name $AzureResourceGroupName -Location $Location
