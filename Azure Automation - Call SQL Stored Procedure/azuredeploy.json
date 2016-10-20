@@ -1,0 +1,99 @@
+{
+    "$schema": "http://schemas.microsoft.org/azure/deploymentTemplate?api-version=2015-01-01-preview#",
+    "contentVersion": "1.0",
+    "parameters": {
+        "automationAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Azure Automation account to deploy to."
+            }
+        },
+        "azureSQLCredentialName": {
+            "type": "string",
+            "defaultValue": "AzureSQLCredential",
+            "metadata": {
+                "description": "AzureSQLCredential is the name of the Automation credential used in this runbook. This credential allows you to authenticate to Azure. "
+            }
+        },
+        "azureSQLUserName": {
+            "type": "string",
+            "metadata": {
+                "description": "The UserName for the Azure Automation credential."
+            }
+        },
+        "azureSQLPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The Password for the Azure Automation credential."
+            }
+        },
+        "scriptUri": {
+            "type": "string",
+            "metadata": {
+                "description": "The URI for the Azure Automation runbook."
+            }
+        },
+        "runbookName": {
+            "type": "string",
+            "metadata": {
+                "description": "The runbook name."
+            }
+        }
+    },
+    "variables": {
+        "runbookDescription": "Executes a Stored Procedure in the specified Azure SQL",
+        "sku": "Free"
+    },
+    "resources": [
+      {
+        "name": "[parameters('automationAccountName')]",
+        "type": "Microsoft.Automation/automationAccounts",
+        "apiVersion": "2015-01-01-preview",
+        "location": "[resourceGroup().location]",
+        "dependsOn": [ ],
+        "tags": { },
+        "properties": {
+          "sku": {
+            "name": "[variables('sku')]"
+          }
+        },
+        "resources": [
+          {
+            "name": "[parameters('runbookName')]",
+            "type": "runbooks",
+            "apiVersion": "2015-01-01-preview",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+              "[concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))]"
+            ],
+            "tags": { },
+            "properties": {
+              "runbookType": "Script",
+              "logProgress": "false",
+              "logVerbose": "false",
+              "description": "[variables('runbookDescription')]",
+              "publishContentLink": {
+                "uri": "[parameters('scriptUri')]",
+                "version": "1.0.0.0"
+              }
+            }
+          },
+          {
+            "name": "[parameters('azureSQLCredentialName')]",
+            "type": "credentials",
+            "apiVersion": "2015-01-01-preview",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+              "[concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))]"
+            ],
+            "tags": { },
+            "properties": {
+              "UserName": "[parameters('azureSQLUserName')]",
+              "Password": "[parameters('azureSQLPassword')]"
+            }
+          },
+        ]
+      }
+    ],
+    "outputs": {}
+}
