@@ -3,19 +3,19 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "azureResourceGroupName": {
-      "value": "joharrisTestREsourceGroup"
+      "value": "AzureResourceGroupName"
     },
     "azureResourceGroupLocation" : {
       "value" : "North Europe"
     },
     "azureAutomationAccountName": {
-      "value": "joharrisTestAutomationAccount"
+      "value": "AzureAutomationAccountName"
     },
     "azureAutomationCredentialName": {
       "value": "AzureAutomationCredential"
     },
     "azureAutomationRunbookPath": {       
-      "value": "C:\\Projects\\azure\\Azure Scheduler - Azure Automation - Call SQL Stored Procedure\\Runbooks\\Powershell Workflow\\ExecuteSQLStoredProcedure.ps1"
+      "value": "RunBookFilePath"
     },
     "azureAutomationRunbookName": {       
       "value": "ExecuteSQLStoredProcedure"
