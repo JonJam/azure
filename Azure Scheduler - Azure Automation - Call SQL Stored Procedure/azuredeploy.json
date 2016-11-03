@@ -1,0 +1,137 @@
+{
+    "$schema": "http://schemas.microsoft.org/azure/deploymentTemplate?api-version=2015-01-01-preview#",
+    "contentVersion": "1.0",
+    "parameters": {        
+        "azureResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Azure Resource Group."
+            }
+        },
+        "azureResourceGroupLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The location of the Azure Resource Group."
+            }
+        },
+        "azureAutomationAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Azure Automation account to deploy to."
+            }
+        },
+        "azureAutomationRunbookPath": {
+            "type": "string",
+            "metadata": {
+                "description": "The file path for the Azure Automation runbook."
+            }
+        },
+        "azureAutomationRunbookName": {
+            "type": "string",
+            "metadata": {
+                "description": "The runbook name."
+            }
+        },
+        "azureAutomationWebHookName": {
+            "type": "string",
+            "metadata": {
+                "description": "The webhook name."
+            }
+        },
+        "azureAutomationWebHookExpiryDate": {
+            "type": "string",
+            "metadata": {
+                "description": "The webhook name."
+            }
+        },
+        "azureAutomationCredentialName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Automation credential used in this runbook. This credential allows you to authenticate to Azure. "
+            }
+        },
+        "azureSQLServerName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Azure SQL Server name."
+            }
+        },
+        "azureSQLDatabaseName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Azure SQL Server Database name."
+            }
+        },
+        "azureSQLUserName": {
+            "type": "string",
+            "metadata": {
+                "description": "The UserName for the Azure Automation credential."
+            }
+        },
+        "azureSQLPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The Password for the Azure Automation credential."
+            }
+        },
+        "azureSQLStoredProcedureName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Stored Procedure."
+            }
+        },
+        "azureSchedulerJobCollectionName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of Azure Scheduler Job Collection name."
+            }
+        },
+        "azureSchedulerJobCollectionPlan": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the plan for the Azure Scheduler Job Collection."
+            }
+        },
+        "azureSchedulerJobName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Azure Scheduler Job."
+            }
+        }
+    },
+    "variables": {
+        "sku": "Free"
+    },
+    "resources": [
+      {
+        "name": "[parameters('azureAutomationAccountName')]",
+        "type": "Microsoft.Automation/automationAccounts",
+        "apiVersion": "2015-01-01-preview",
+        "location": "[resourceGroup().location]",
+        "dependsOn": [ ],
+        "tags": { },
+        "properties": {
+          "sku": {
+            "name": "[variables('sku')]"
+          }
+        },
+        "resources": [
+          {
+            "name": "[parameters('azureAutomationCredentialName')]",
+            "type": "credentials",
+            "apiVersion": "2015-01-01-preview",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+              "[concat('Microsoft.Automation/automationAccounts/', parameters('azureAutomationAccountName'))]"
+            ],
+            "tags": { },
+            "properties": {
+              "UserName": "[parameters('azureSQLUserName')]",
+              "Password": "[parameters('azureSQLPassword')]"
+            }
+          }
+        ]
+      }
+    ],
+    "outputs": {}
+}

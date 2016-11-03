@@ -1,0 +1,54 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "azureResourceGroupName": {
+      "value": "joharrisTestREsourceGroup"
+    },
+    "azureResourceGroupLocation" : {
+      "value" : "North Europe"
+    },
+    "azureAutomationAccountName": {
+      "value": "joharrisTestAutomationAccount"
+    },
+    "azureAutomationCredentialName": {
+      "value": "AzureAutomationCredential"
+    },
+    "azureAutomationRunbookPath": {       
+      "value": "C:\\Projects\\azure\\Azure Scheduler - Azure Automation - Call SQL Stored Procedure\\Runbooks\\Powershell Workflow\\ExecuteSQLStoredProcedure.ps1"
+    },
+    "azureAutomationRunbookName": {       
+      "value": "ExecuteSQLStoredProcedure"
+    },
+    "azureAutomationWebHookName": {
+      "value": "AzureAutomationWebHookName"
+    },
+    "azureAutomationWebHookExpiryDate": {
+      "value": "10/12/2016"
+    },
+    "azureSQLServerName": {
+      "value": "AzureSQLServerName"
+    },
+    "azureSQLDatabaseName": {
+      "value": "AzureSQLDatabaseName"
+    },
+    "azureSQLUserName": {
+      "value": "AzureSQLUserName"
+    },
+    "azureSQLPassword": {
+      "value": "AzureSQLPassword"
+    },
+    "azureSQLStoredProcedureName": {
+      "value": "StoredProcedureName"
+    },
+    "azureSchedulerJobCollectionName": {
+      "value": "AzureSchedulerJobCollectionName"
+    },
+    "azureSchedulerJobCollectionPlan": {
+      "value": "Standard"
+    },
+    "azureSchedulerJobName":  {
+      "value": "AzureSchedulerJobName"
+    }
+  }
+}
