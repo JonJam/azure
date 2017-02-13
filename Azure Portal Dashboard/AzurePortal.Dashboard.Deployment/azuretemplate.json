@@ -1,0 +1,213 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "dashboardName": {
+      "type": "string"
+    },
+    "dashboardId": {
+      "type": "string"
+    },
+    "vmResourceGroupName": {
+      "type": "string"
+    },
+    "vmName": {
+      "type": "string"
+    }
+  },
+  "variables": {    
+    "vmRef": "[resourceId(parameters('vmResourceGroupName'), 'Microsoft.Compute/virtualMachines', parameters('vmName'))]"
+  },
+  "resources": [
+    {
+      "name": "[parameters('dashboardId')]",
+      "type": "Microsoft.Portal/dashboards",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-08-01-preview",
+      "tags": {
+        "hidden-title": "[parameters('dashboardName')]"
+      },
+      "properties": {
+        "lenses": {
+          "0": {
+            "order": 0,
+            "parts": {
+              "0": {
+                "position": {
+                  "x": 0,
+                  "y": 0,
+                  "rowSpan": 4,
+                  "colSpan": 6
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "id",
+                      "value": "[variables('vmRef')]"
+                    },
+                    {
+                      "name": "_msPortalFxTimeRange",
+                      "binding": "timeRange",
+                      "isOptional": true
+                    }
+                  ],
+                  "type": "Extension/Microsoft_Azure_Compute/PartType/CpuPercentageMetricsSummaryPart",
+                  "settings": {
+                    "content": {
+                      "metricQuerySetting": {
+                        "title": "CPU percentage",
+                        "timespan": {
+                          "duration": "PT1H",
+                          "start": null,
+                          "end": null
+                        },
+                        "metrics": [
+                          {
+                            "resourceId": "[variables('vmRef')]",
+                            "name": "Percentage CPU",
+                            "timeGrain": "PT1M",
+                            "displayName": "CPU percentage"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "isAdapter": true,
+                  "asset": {
+                    "idInputName": "id",
+                    "type": "VirtualMachine"
+                  }
+                }
+              },
+              "1": {
+                "position": {
+                  "x": 6,
+                  "y": 4,
+                  "rowSpan": 2,
+                  "colSpan": 2
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "id",
+                      "value": "[variables('vmRef')]"
+                    },
+                    {
+                      "name": "_msPortalFxTimeRange",
+                      "binding": "timeRange",
+                      "isOptional": true
+                    }
+                  ],
+                  "type": "Extension/Microsoft_Azure_Compute/PartType/DiskReadMetricsSummaryPart",
+                  "settings": {},
+                  "isAdapter": true,
+                  "asset": {
+                    "idInputName": "id",
+                    "type": "VirtualMachine"
+                  }
+                }
+              },
+              "2": {
+                "position": {
+                  "x": 8,
+                  "y": 4,
+                  "rowSpan": 2,
+                  "colSpan": 2
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "id",
+                      "value": "[variables('vmRef')]"
+                    },
+                    {
+                      "name": "_msPortalFxTimeRange",
+                      "binding": "timeRange",
+                      "isOptional": true
+                    }
+                  ],
+                  "type": "Extension/Microsoft_Azure_Compute/PartType/DiskWriteMetricsSummaryPart",
+                  "settings": {},
+                  "isAdapter": true,
+                  "asset": {
+                    "idInputName": "id",
+                    "type": "VirtualMachine"
+                  }
+                }
+              },
+              "3": {
+                "position": {
+                  "x": 0,
+                  "y": 4,
+                  "rowSpan": 4,
+                  "colSpan": 6
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "id",
+                      "value": "[variables('vmRef')]"
+                    },
+                    {
+                      "name": "_msPortalFxTimeRange",
+                      "binding": "timeRange",
+                      "isOptional": true
+                    }
+                  ],
+                  "type": "Extension/Microsoft_Azure_Compute/PartType/DiskReadWriteMetricsSummaryPart",
+                  "settings": {},
+                  "isAdapter": true,
+                  "asset": {
+                    "idInputName": "id",
+                    "type": "VirtualMachine"
+                  }
+                }
+              },
+              "4": {
+                "position": {
+                  "x": 6,
+                  "y": 0,
+                  "rowSpan": 4,
+                  "colSpan": 6
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "id",
+                      "value": "[variables('vmRef')]"
+                    },
+                    {
+                      "name": "_msPortalFxTimeRange",
+                      "binding": "timeRange",
+                      "isOptional": true
+                    }
+                  ],
+                  "type": "Extension/Microsoft_Azure_Compute/PartType/NetworkInOutMetricsSummaryPart",
+                  "settings": {},
+                  "isAdapter": true,
+                  "asset": {
+                    "idInputName": "id",
+                    "type": "VirtualMachine"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "metadata": {
+          "model": {
+            "timeRange": {
+              "value": {
+                "relative": {
+                  "duration": 24,
+                  "timeUnit": 1
+                }
+              },
+              "type": "MsPortalFx.Composition.Configuration.ValueTypes.TimeRange"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

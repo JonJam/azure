@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26206.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "AzurePortal.Dashboard.Deployment", "AzurePortal.Dashboard.Deployment\AzurePortal.Dashboard.Deployment.deployproj", "{F3E2BCFB-D984-4473-AEB1-4F9AA8CF7BDD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F3E2BCFB-D984-4473-AEB1-4F9AA8CF7BDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3E2BCFB-D984-4473-AEB1-4F9AA8CF7BDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3E2BCFB-D984-4473-AEB1-4F9AA8CF7BDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3E2BCFB-D984-4473-AEB1-4F9AA8CF7BDD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
