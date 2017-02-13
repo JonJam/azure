@@ -1,0 +1,6 @@
+html body .social-sign-up #api > div:first-child {
+  display: none;
+}
+html body .social-sign-up #api #email_ver_input {
+  margin-bottom: 10px 0;
+}

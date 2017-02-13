@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageAccountNamePrefix": {
+      "value": "adb2cdata"
+    },
+    "storageContainerName": {
+      "value": "adb2c-ui"
+    },
+    "blobTTL": {
+      "value": 3600
+    },
+    "cdnProfileNamePrefix": {
+      "value": "adb2c"
+    },
+    "cdnProfileSku": {
+      "value": "Premium_Verizon"
+    },
+    "cdnEndpointName": {
+      "value": "adb2c-ui"
+    }
+  }
+}

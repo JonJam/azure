@@ -1,0 +1,6 @@
+html body .local-sign-up #api > div:first-child {
+  display: none;
+}
+html body .local-sign-up #api #email_ver_input {
+  margin-bottom: 10px 0;
+}

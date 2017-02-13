@@ -1,0 +1,111 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageAccountNamePrefix": {
+      "type": "string"
+    },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "storageContainerName": {
+      "type": "string"
+    },
+    "blobTTL": {
+      "type": "int"
+    },
+    "cdnProfileNamePrefix": {
+      "type": "string"
+    },
+    "cdnProfileSku": {
+      "type": "string",
+      "defaultValue": "Standard_Akamai",
+      "allowedValues": [
+        "Standard_Akamai",
+        "Standard_Verizon",
+        "Premium_Verizon"
+      ]
+    },
+    "cdnEndpointName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "storageAccountName": "[concat(parameters('storageAccountNamePrefix'), uniqueString(resourceGroup().id))]",
+    "cdnProfileName": "[concat(parameters('cdnProfileNamePrefix'), uniqueString(resourceGroup().id))]"
+  },
+  "resources": [
+    {
+      "name": "[variables('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "[parameters('storageAccountNamePrefix')]"
+      },
+      "properties": {
+        "accountType": "[parameters('storageAccountType')]"
+      }
+    },
+    {
+      "name": "[variables('cdnProfileName')]",
+      "type": "Microsoft.Cdn/profiles",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-04-02",
+      "tags": {
+        "displayName": "[variables('cdnProfileName')]"
+      },
+      "sku": {
+        "name": "[parameters('cdnProfileSku')]"
+      },
+      "resources": [
+        {
+          "apiVersion": "2016-04-02",
+          "dependsOn": [
+            "[variables('cdnProfileName')]",
+            "[variables('storageAccountName')]"
+          ],
+          "location": "[resourceGroup().location]",
+          "name": "[parameters('cdnEndpointName')]",
+          "properties": {
+            "originHostHeader": "[replace(replace(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-06-15' ).primaryEndpoints.blob,'https://',''),'/','')]",
+            "isHttpAllowed": false,
+            "isHttpsAllowed": true,
+            "originPath": "[concat('/', parameters('storageContainerName'))]",
+            "origins": [
+              {
+                "name": "[concat(variables('storageAccountName'), '-origin')]",
+                "properties": {
+                  "hostName": "[replace(replace(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-06-15' ).primaryEndpoints.blob,'https://',''),'/','')]"
+                }
+              }
+            ]
+          },
+          "tags": {
+            "displayName": "[parameters('cdnEndpointName')]"
+          },
+          "type": "endpoints"
+        }
+      ]
+    }
+  ],
+  "outputs": {
+    "storageAccountName": {
+      "type": "string",
+      "value": "[variables('storageAccountName')]"
+    },
+    "cdnHostName": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.cdn/profiles/endpoints', variables('cdnProfileName'), parameters('cdnEndpointName'))).hostname]"
+    }
+  }
+}
