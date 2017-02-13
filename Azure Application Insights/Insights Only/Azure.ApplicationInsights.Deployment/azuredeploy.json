@@ -1,0 +1,58 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appNamePrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Enter the application name."
+      }
+    }
+  },
+  "variables": {
+    "appName": "[concat(parameters('appNamePrefix'), '-insights-', uniqueString(resourceGroup().id))]",
+    // Plan: Basic or Application Insights Enterprise.
+    "pricePlan": "Basic",
+    "billingPlanName": "[concat(variables('appName'), '/', variables('pricePlan'))]",
+    // Type: ASP.NET web application, Java web application, HockeyApp bridge application, Other (preview)
+    "applicationType": "Other (preview)",
+    // Daily quota in GB
+    "dailyQuota": 100,
+    // Daily quota reset hour in UTC (0 to 23). Values outside the range will get a random reset hour.
+    "dailyQuotaResetTime": 24,
+    // The % value of daily quota after which warning mail to be sent.
+    "warningThreshold": 90
+  },
+  "resources": [
+    {
+      "apiVersion": "2014-08-01",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('appName')]",
+      "type": "microsoft.insights/components",
+      "properties": {
+        "Application_Type": "[variables('applicationType')]",
+        "ApplicationId": "[variables('appName')]",
+        "Name": "[variables('appName')]",
+        "Flow_Type": "Redfield",
+        "Request_Source": "ARMAIExtension"
+      }
+    },
+    {
+      "name": "[variables('billingPlanName')]",
+      "type": "microsoft.insights/components/CurrentBillingFeatures",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-05-01",
+      "dependsOn": [
+        "[resourceId('microsoft.insights/components', variables('appName'))]"
+      ],
+      "properties": {
+        "CurrentBillingFeatures": "[variables('pricePlan')]",
+        "DataVolumeCap": {
+          "Cap": "[variables('dailyQuota')]",
+          "WarningThreshold": "[variables('warningThreshold')]",
+          "ResetTime": "[variables('dailyQuotaResetTime')]"
+        }
+      }
+    }
+  ]
+}
