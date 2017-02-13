@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "webSiteNamePrefix": {
+      "value": "appinsights-wa"
+    },
+    "skuName": {
+      "value": "B1"
+    },
+    "appInsightsNamePrefix": {
+      "value": "appinsights-wa-ai"
+    },
+    "hostingPlanName": {
+      "value": "appinsights-wa-asp"
+    },
+    "deployPackageFolder": {
+      "value": "Azure.ApplicationInsights.WebApp"
+    },
+    "deployPackageFileName": {
+      "value": "package.zip"
+    },
+    "dbServerNamePrefix": {
+      "value": "appinsights-sqlserver"
+    },
+    "dbName": {
+      "value": "appinsights-sqldb"
+    },
+    "dbServerAdminLogin": {
+      "value": null
+    }
+  }
+}

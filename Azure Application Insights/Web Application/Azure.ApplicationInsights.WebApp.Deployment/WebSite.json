@@ -1,0 +1,367 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "hostingPlanName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "skuName": {
+      "type": "string",
+      "defaultValue": "F1",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "metadata": {
+        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "skuCapacity": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "metadata": {
+        "description": "Describes plan's instance count"
+      }
+    },
+    "webSiteNamePrefix": {
+      "type": "string"
+    },
+    "appInsightsNamePrefix": {
+      "type": "string"
+    },
+    "_artifactsLocation": {
+      "type": "string"
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring"
+    },
+    "deployPackageFolder": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "WebDeploy package location. This path is relative to the _artifactsLocation parameter"
+      }
+    },
+    "deployPackageFileName": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name of the webdeploy package"
+      }
+    },
+    "dbServerNamePrefix": {
+      "type": "string"
+    },
+    "dbServerAdminLogin": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dbServerAdminLoginPassword": {
+      "type": "securestring"
+    },
+    "dbName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dbCollation": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+    },
+    "dbEdition": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
+    "dbRequestedServiceObjectiveName": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "S0",
+        "S1",
+        "S2",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "metadata": {
+        "description": "Describes the performance level for Edition"
+      }
+    }
+  },
+  "variables": {
+    "webSiteName": "[concat(parameters('webSiteNamePrefix'), uniqueString(resourceGroup().id))]",
+    "appInsightsName": "[concat(parameters('appInsightsNamePrefix'), uniqueString(resourceGroup().id))]",
+    "dbServerName": "[concat(parameters('dbServerNamePrefix'), uniqueString(resourceGroup().id))]",
+
+    "dbSizeAlertName": "Database Size"
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('hostingPlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "HostingPlan"
+      },
+      "sku": {
+        "name": "[parameters('skuName')]",
+        "capacity": "[parameters('skuCapacity')]"
+      },
+      "properties": {
+        "name": "[parameters('hostingPlanName')]"
+      }
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[variables('webSiteName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "Resource",
+        "displayName": "Website"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+        "[resourceId('Microsoft.Sql/servers', variables('dbServerName'))]",
+        "[resourceId('Microsoft.Sql/servers/databases', variables('dbServerName'), parameters('dbName'))]"
+      ],
+      "properties": {
+        "name": "[variables('webSiteName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
+        "siteConfig": {
+          "connectionStrings": [
+            {
+              "name": "DefaultConnection",
+              "connectionString": "[concat('Server=tcp:', variables('dbServerName'), '.database.windows.net,1433;Initial Catalog=', parameters('dbName') ,';Persist Security Info=False;User ID=', parameters('dbServerAdminLogin'), ';Password=', parameters('dbServerAdminLoginPassword'), ';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]",
+              "type": 2
+            }
+          ]
+        }
+      },
+      "resources": [
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('webSiteName'))]",
+            "[concat('Microsoft.Web/sites/', variables('websiteName'), '/Extensions/MSDeploy')]",
+            "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]"
+          ],
+          "tags": {
+            "displayName": "updateAppSettings"
+          },
+          "properties": {
+            "AppInsightsInstrumentationKey": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightsName')), '2014-04-01').InstrumentationKey]"
+          }
+        },
+        {
+          "name": "MSDeploy",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('webSiteName'))]"
+          ],
+          "tags": {
+            "displayName": "deploy"
+          },
+          "properties": {
+            "packageUri": "[concat(parameters('_artifactsLocation'), '/', parameters('deployPackageFolder'), '/', parameters('deployPackageFileName'), parameters('_artifactsLocationSasToken'))]",
+            "dbType": "None",
+            "connectionString": "",
+            "setParameters": {
+              "IIS Web Application Name": "[variables('webSiteName')]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "name": "[concat(parameters('hostingPlanName'), '-', resourceGroup().name)]",
+      "type": "Microsoft.Insights/autoscalesettings",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "Resource",
+        "displayName": "AutoScaleSettings"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+      ],
+      "properties": {
+        "profiles": [
+          {
+            "name": "Default",
+            "capacity": {
+              "minimum": 1,
+              "maximum": 2,
+              "default": 1
+            },
+            "rules": [
+              {
+                "metricTrigger": {
+                  "metricName": "CpuPercentage",
+                  "metricResourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+                  "timeGrain": "PT1M",
+                  "statistic": "Average",
+                  "timeWindow": "PT10M",
+                  "timeAggregation": "Average",
+                  "operator": "GreaterThan",
+                  "threshold": 80.0
+                },
+                "scaleAction": {
+                  "direction": "Increase",
+                  "type": "ChangeCount",
+                  "value": 1,
+                  "cooldown": "PT10M"
+                }
+              },
+              {
+                "metricTrigger": {
+                  "metricName": "CpuPercentage",
+                  "metricResourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+                  "timeGrain": "PT1M",
+                  "statistic": "Average",
+                  "timeWindow": "PT1H",
+                  "timeAggregation": "Average",
+                  "operator": "LessThan",
+                  "threshold": 60.0
+                },
+                "scaleAction": {
+                  "direction": "Decrease",
+                  "type": "ChangeCount",
+                  "value": 1,
+                  "cooldown": "PT1H"
+                }
+              }
+            ]
+          }
+        ],
+        "enabled": false,
+        "name": "[concat(parameters('hostingPlanName'), '-', resourceGroup().name)]",
+        "targetResourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+      }
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "name": "[variables('appInsightsName')]",
+      "type": "Microsoft.Insights/components",
+      "kind": "web",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites/', variables('webSiteName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('webSiteName'))]": "Resource",
+        "displayName": "AppInsightsComponent"
+      },
+      "properties": {
+        "applicationId": "[variables('webSiteName')]"
+      }
+    },
+    {
+      "name": "[variables('dbServerName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-04-01-preview",
+      "dependsOn": [],
+      "properties": {
+        "administratorLogin": "[parameters('dbServerAdminLogin')]",
+        "administratorLoginPassword": "[parameters('dbServerAdminLoginPassword')]"
+      },
+      "resources": [
+        {
+          "name": "AllowAllWindowsAzureIps",
+          "type": "firewallrules",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('dbServerName'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "name": "[parameters('dbName')]",
+          "type": "databases",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('dbServerName'))]"
+          ],
+          "tags": {
+            "displayName": "db"
+          },
+          "properties": {
+            "collation": "[parameters('dbCollation')]",
+            "edition": "[parameters('dbEdition')]",
+            "maxSizeBytes": "1073741824",
+            "requestedServiceObjectiveName": "[parameters('dbRequestedServiceObjectiveName')]"
+          }
+        }
+      ]
+    },
+    {
+      "name": "[variables('dbSizeAlertName')]",
+      "type": "Microsoft.Insights/alertRules",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', variables('dbServerName'))]",
+        "[resourceId('Microsoft.Sql/servers/databases', variables('dbServerName'), parameters('dbName'))]"
+      ],
+      "tags": {
+        "$type": "Microsoft.WindowsAzure.Management.Common.Storage.CasePreservedDictionary, Microsoft.WindowsAzure.Management.Common.Storage",
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Sql/servers/', variables('dbServerName'), '/databases/', parameters('dbName'))]": "Resource"
+      },
+      "properties": {
+        "name": "[variables('dbSizeAlertName')]",
+        "isEnabled": true,
+        "condition": {
+          "$type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition, Microsoft.WindowsAzure.Management.Mon.Client",
+          "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
+          "dataSource": {
+            "$type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource, Microsoft.WindowsAzure.Management.Mon.Client",
+            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
+            "resourceUri": "[resourceId('Microsoft.Sql/servers/databases', variables('dbServerName'), parameters('dbName'))]",
+            "metricName": "storage_percent"
+          },
+          "operator": "GreaterThanOrEqual",
+          "threshold": 70,
+          "windowSize": "PT1H",
+          "timeAggregation": "Maximum"
+        },
+        "actions": [
+          {
+            "$type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleEmailAction, Microsoft.WindowsAzure.Management.Mon.Client",
+            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
+            "sendToServiceOwners": true,
+            "customEmails": []
+          }
+        ]
+      }
+    }
+  ]
+}

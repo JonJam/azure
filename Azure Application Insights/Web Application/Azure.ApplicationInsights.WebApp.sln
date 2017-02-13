@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26206.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "Azure.ApplicationInsights.WebApp.Deployment", "Azure.ApplicationInsights.WebApp.Deployment\Azure.ApplicationInsights.WebApp.Deployment.deployproj", "{C14A3CAF-992B-41B4-84E6-50AB264B07A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Azure.ApplicationInsights.WebApp", "Azure.ApplicationInsights.WebApp\Azure.ApplicationInsights.WebApp.csproj", "{702BDE84-2A18-4A79-AA6C-B88AA8471BBB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C14A3CAF-992B-41B4-84E6-50AB264B07A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C14A3CAF-992B-41B4-84E6-50AB264B07A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C14A3CAF-992B-41B4-84E6-50AB264B07A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C14A3CAF-992B-41B4-84E6-50AB264B07A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{702BDE84-2A18-4A79-AA6C-B88AA8471BBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{702BDE84-2A18-4A79-AA6C-B88AA8471BBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{702BDE84-2A18-4A79-AA6C-B88AA8471BBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{702BDE84-2A18-4A79-AA6C-B88AA8471BBB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
