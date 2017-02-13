@@ -1,0 +1,81 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "dataFactoryNamePrefix": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dataFactoryDiagnosticsSaNamePrefix": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "dataFactoryName": "[concat(parameters('dataFactoryNamePrefix'), uniqueString(resourceGroup().id))]",
+    "dataFactoryDiagnosticsSaName": "[concat(parameters('dataFactoryDiagnosticsSaNamePrefix'), uniqueString(resourceGroup().id))]",
+
+    "failedRunsAlertName": "Failed Runs - Last Hour"
+  },
+  "resources": [
+    {
+      "apiVersion": "2016-01-01",
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('dataFactoryDiagnosticsSaName')]",
+      "sku": {
+        "name": "Standard_LRS",
+        "tier": "Standard"
+      },
+      "kind": "Storage",
+      "location": "[resourceGroup().location]"
+    },
+    {
+      "name": "[variables('dataFactoryName')]",
+      "apiVersion": "2015-10-01",
+      "type": "Microsoft.DataFactory/datafactories",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('dataFactoryDiagnosticsSaName'))]"
+      ],
+      "resources": [
+      ]
+    },
+    {
+      "name": "[variables('failedRunsAlertName')]",
+      "type": "Microsoft.Insights/alertRules",
+      "apiVersion": "2014-04-01",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.DataFactory/datafactories', variables('dataFactoryName'))]"
+      ],
+      "tags": {
+        "$type": "Microsoft.WindowsAzure.Management.Common.Storage.CasePreservedDictionary, Microsoft.WindowsAzure.Management.Common.Storage",
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.DataFactory/datafactories/', variables('dataFactoryName'))]": "Resource"
+      },
+      "properties": {
+        "name": "[variables('failedRunsAlertName')]",
+        "isEnabled": true,
+        "condition": {
+          "$type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition, Microsoft.WindowsAzure.Management.Mon.Client",
+          "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
+          "dataSource": {
+            "$type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource, Microsoft.WindowsAzure.Management.Mon.Client",
+            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
+            "resourceUri": "[resourceId('Microsoft.DataFactory/datafactories', variables('dataFactoryName'))]",
+            "metricName": "FailedRuns"
+          },
+          "threshold": 2,
+          "windowSize": "PT1H",
+          "timeAggregation": "Total"
+        },
+        "actions": [
+          {
+            "$type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleEmailAction, Microsoft.WindowsAzure.Management.Mon.Client",
+            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
+            "sendToServiceOwners": true,
+            "customEmails": []
+          }
+        ]
+      }
+    }
+  ]
+}
