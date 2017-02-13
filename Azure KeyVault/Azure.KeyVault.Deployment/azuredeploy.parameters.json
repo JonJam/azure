@@ -1,0 +1,44 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "keyVaultNamePrefix": {
+      "value": "secrets"
+    },
+    "keyVaultSku": {
+      "value": "Standard"
+    },
+    "activeDirectoryTenantId": {
+      "value": "TODO Add AD Tenant ID."
+    },
+    "keyVaultAccessPolicies": {
+      "value": [
+        {
+          "tenantId": "TODO Add AD Tenant ID.",
+          "objectId": "TODO Add AD User ID.",
+          "permissions": {
+            "keys": [
+              "create",
+              "import",
+              "update",
+              "get",
+              "list",
+              "delete",
+              "backup",
+              "restore"
+            ],
+            "secrets": [
+              "all"
+            ]
+          }
+        }
+      ]
+    },
+    "serviceFabricFrontEndNodeVMAdminPasswordSecretName": {
+      "value": "ServiceFabricFrontEndNodeVMAdminPassword"
+    },
+    "serviceFabricBackEndNodeVMAdminPasswordSecretName": {
+      "value": "ServiceFabricBackEndNodeVMAdminPassword"
+    }
+  }
+}
