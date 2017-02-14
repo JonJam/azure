@@ -1,0 +1,89 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "serviceFabricClusterNamePrefix": {
+      "value": "serviceFabricServices"
+    },
+    "serviceFabricReliabilityTier": {
+      "value": "Bronze"
+    },
+    "keyVaultResourceGroupName": {
+      "value": "keyVault-dev-rg"
+    },
+    "keyVaultName": {
+      "value": "keyVault"
+    },
+    "clusterCertificateUrlValue": {
+      "value": "TODO Url to cluster certificate in Key Vault."
+    },
+    "clusterCertificateThumbprint": {
+      "value": "TODO Cluster certificate thumbprint."
+    },
+    "applicationCertificateUrlValue": {
+      "value": "TODO Url to Application certificate i.e. SSL in Key Vault."
+    },
+    "applicationCertificateThumbprint": {
+      "value": "TODO Application certificate thumbprint."
+    },
+    "aadTenantId": {
+      "value": "TODO Azure AD Tenant ID."
+    },
+    "aadClusterApplicationId": {
+      "value": "TODO Azure AD Cluster application ID."
+    },
+    "aadClientApplicationId": {
+      "value": "TODO Azure AD Cluster client ID."
+    },
+    "frontEndVMAdminUserName": {
+      "value": "TODO VM Admin username."
+    },
+    "frontEndVMAdminPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "TODO Resource ID to password in Key Vault."
+        },
+        "secretName": "ServiceFabricNodeVMAdminPassword"
+      }
+    },
+    "backEndVMAdminUserName": {
+      "value": "TODO VM Admin username."
+    },
+    "backEndVMAdminPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "TODO Resource ID to password in Key Vault."
+        },
+        "secretName": "ServiceFabricNodeVMAdminPassword"
+      }
+    },
+    "supportLogStorageAccountSku": {
+      "value": "Standard_LRS"
+    },
+    "applicationDiagnosticsStorageAccountSku": {
+      "value": "Standard_LRS"
+    },
+    // DURABILITY CHANGES - If change this value, then change backEndServiceFabricNodeVMSku value.
+    "backEndServiceFabricNodeDurabilityLevel": {
+      "value": "Bronze"
+    },
+    // DURABILITY CHANGES - Change this value if backeEdServiceFabricNodeDurabilityLevel changes.
+    "backEndServiceFabricNodeVMSku": {
+      "value": "Standard_D1_v2"
+    },
+    "backEndServiceFabricNodeInstanceCount": {
+      "value": 3
+    },
+    // DURABILITY CHANGES - If change this value, then change frontEndServiceFabricNodeVMSku value.
+    "frontEndServiceFabricNodeDurabilityLevel": {
+      "value": "Bronze"
+    },
+    // DURABILITY CHANGES - Change this value if frontEndServiceFabricNodeDurabilityLevel changes.
+    "frontEndServiceFabricNodeVMSku": {
+      "value": "Standard_D1_v2"
+    },
+    "frontEndServiceFabricNodeInstanceCount": {
+      "value": 3
+    }
+  }
+}
