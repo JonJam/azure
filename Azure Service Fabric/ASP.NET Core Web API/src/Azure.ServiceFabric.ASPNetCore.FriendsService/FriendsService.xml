@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Azure.ServiceFabric.ASPNetCore.FriendsService</name>
+    </assembly>
+    <members>
+        <member name="M:Azure.ServiceFabric.ASPNetCore.FriendsService.Controllers.FriendsController.Get">
+            <summary>
+            Retreives a list of the user's friends.
+            </summary>
+            <remarks>
+            Implementation notes
+            </remarks>
+            <returns>Returns the user's friends.</returns>
+            <response code="200">Returns the user's friends.</response>
+            <response code="401">If the request is not authorized.</response>
+        </member>
+        <member name="T:Azure.ServiceFabric.ASPNetCore.FriendsService.FriendsService">
+            <summary>
+            The FabricRuntime creates an instance of this class for each service type instance. 
+            </summary>
+        </member>
+        <member name="M:Azure.ServiceFabric.ASPNetCore.FriendsService.FriendsService.CreateServiceInstanceListeners">
+            <summary>
+            Optional override to create listeners (like tcp, http) for this service instance.
+            </summary>
+            <returns>The collection of listeners.</returns>
+        </member>
+        <member name="M:Azure.ServiceFabric.ASPNetCore.FriendsService.Program.Main">
+            <summary>
+            This is the entry point of the service host process.
+            </summary>
+        </member>
+    </members>
+</doc>

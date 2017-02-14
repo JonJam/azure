@@ -1,0 +1,29 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": false,
+    "iisExpress": {
+      "applicationUrl": "https://localhost:52577/",
+      "sslPort": 52577
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "api/friends",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Azure.ServiceFabric.ASPNetCore.FriendsService": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "api/friends",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:52577"
+    }
+  }
+}

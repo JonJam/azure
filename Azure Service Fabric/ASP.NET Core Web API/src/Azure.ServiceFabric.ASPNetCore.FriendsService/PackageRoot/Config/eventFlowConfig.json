@@ -1,0 +1,28 @@
+﻿{
+  "inputs": [
+    {
+      "type": "EventSource",
+      "sources": [
+        { "providerName": "Microsoft-ServiceFabric-Services" },
+        { "providerName": "Microsoft-ServiceFabric-Actors" },
+        { "providerName": "Azure.ServiceFabric.ASPNetCore.FriendsService" }
+      ]
+    },
+    {
+      "type": "Microsoft.Extensions.Logging"
+    }
+  ],
+  "filters": [
+    {
+      "type": "drop",
+      "include": "Level == Verbose"
+    }
+  ],
+  "outputs": [
+    {
+      "type": "ApplicationInsights",
+      "instrumentationKey": "00000000-0000-0000-0000-000000000000"
+    }
+  ],
+  "schemaVersion": "2016-08-11"
+}
